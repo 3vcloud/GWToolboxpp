@@ -302,6 +302,10 @@
     <ClInclude Include="GWToolbox\mp3.h" />
     <ClInclude Include="GWToolbox\Modules\ZrawDeepModule.h" />
     <ClInclude Include="GWToolbox\Widgets\Minimap\EffectRenderer.h" />
+    <ClInclude Include="GWToolbox\Windows\TexmodWindow.h" />
+    <ClInclude Include="GWToolbox\uMod_Error.h" />
+    <ClInclude Include="GWToolbox\uMod_Main.h" />
+    <ClInclude Include="GWToolbox\uMod_GlobalDefines.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWToolbox\main.cpp" />
@@ -469,6 +473,7 @@
     <ClCompile Include="GWToolbox\mp3.cpp" />
     <ClCompile Include="GWToolbox\Modules\ZrawDeepModule.cpp" />
     <ClCompile Include="GWToolbox\Widgets\Minimap\EffectRenderer.cpp" />
+    <ClCompile Include="GWToolbox\Windows\TexmodWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GWToolbox.rc">
