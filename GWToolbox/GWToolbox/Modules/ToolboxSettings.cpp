@@ -46,6 +46,7 @@
 #include <Windows/SkillListingWindow.h>
 #include <Windows/StringDecoderWindow.h>
 #include <Windows/FriendListWindow.h>
+#include <Windows/TexmodWindow.h>
 
 #include <Widgets/TimerWidget.h>
 #include <Widgets/HealthWidget.h>
@@ -95,6 +96,7 @@ void ToolboxSettings::LoadModules(CSimpleIni* ini) {
 	optional_modules.push_back(&DoorMonitorWindow::Instance());
 	optional_modules.push_back(&SkillListingWindow::Instance());
 	if(use_friendlist) optional_modules.push_back(&FriendListWindow::Instance());
+	optional_modules.push_back(&TexmodWindow::Instance());
 #endif
 
 	SettingsWindow::Instance().sep_widgets = optional_modules.size();
