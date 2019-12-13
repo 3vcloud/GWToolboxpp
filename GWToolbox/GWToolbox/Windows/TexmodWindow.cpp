@@ -8,19 +8,36 @@
 #define BIG_BUFSIZE 1<<24
 #define SMALL_BUFSIZE 1<<10
 
+std::wstring dll_location;
+
 void TexmodWindow::Initialize() {
     ToolboxWindow::Initialize();
-    LoadDll();
+    dll_location = Resources::GetPath(L"uMod_d3d9_HI.dll");
+    dll_location = L"C:\\Users\\Jon\\Desktop\\uMod\\uMod_d3d9_DI.dll";
     //StartuModServer();
 }
 void TexmodWindow::Terminate() {
     StopuModServer();
+    UnloadDll();
 }
 void TexmodWindow::Update(float delta) {
 
 }
 void TexmodWindow::Draw(IDirect3DDevice9* pDevice) {
-
+    static bool inject_dll = false;
+    static bool start_umod = false;
+    if (ImGui::Checkbox("Inject Dll", &inject_dll)) {
+        if (inject_dll)
+            LoadDll();
+        else
+            UnloadDll();
+    }
+    if (ImGui::Checkbox("Start uMod", &start_umod)) {
+        if (!start_umod)
+            StopuModServer();
+        else
+            StartuModServer();
+    }
 }
 void TexmodWindow::LoadSettings(CSimpleIni* ini) {
     ToolboxWindow::LoadSettings(ini);
@@ -52,33 +69,32 @@ void TexmodWindow::StopuModServer() {
     }    
     if (uMod_Server.joinable())
         uMod_Server.join();
+    Log::Log("Stopped uMod Server\n");
+}
+bool TexmodWindow::UnloadDll() {
     if (uMod_RemoveHook)
         uMod_RemoveHook();
     if (uMod_Injector.joinable())
         uMod_Injector.join();
-    Log::Log("Stopped uMod Server\n");
+    if (umod_d3d9_dll) {
+        // This isn't working!
+        FreeLibrary(umod_d3d9_dll);
+        umod_d3d9_dll = NULL;
+    }
+    Log::Log("Unloaded %ls\n", dll_location.c_str());
+    return true;
 }
 bool TexmodWindow::LoadDll() {
     // Try to download and inject discord_game_sdk.dll for discord.
-    std::wstring dll_location = L"C:\\Users\\Jon\\Dropbox\\Git Repositories\\Texmod\\uMod_DX9\\Debug\\uMod_DX9.dll";
-    HINSTANCE hGetProcIDDLL = LoadLibraryW(dll_location.c_str());
-    if (!hGetProcIDDLL) {
+    if(!umod_d3d9_dll)
+        umod_d3d9_dll = LoadLibraryW(dll_location.c_str());
+    if (!umod_d3d9_dll) {
         Log::Error("Failed to find and load library for %ls", dll_location.c_str());
         return false;
     }
-    uMod_InstallHook = (uMod_pt)GetProcAddress(hGetProcIDDLL, "InstallHook");
-    if (!uMod_InstallHook) {
-        Log::Error("Failed to find address for uMod_InstallHook");
-        return false;
-    }
-    uMod_RemoveHook = (uMod_pt)GetProcAddress(hGetProcIDDLL, "RemoveHook");
-    if (!uMod_RemoveHook) {
-        Log::Error("Failed to find address for uMod_RemoveHook");
-        return false;
-    }
-    Log::Log("%ls hooked!\n", dll_location.c_str());
-    uMod_RemoveHook();
-    uMod_InstallHook();
+    uMod_InstallHook = (uMod_pt)GetProcAddress(umod_d3d9_dll, "InstallHook");
+    uMod_RemoveHook = (uMod_pt)GetProcAddress(umod_d3d9_dll, "RemoveHook");
+    Log::Log("Loaded %ls\n", dll_location.c_str());
     return true;
 }
 void TexmodWindow::StartuModServer() {
@@ -98,6 +114,8 @@ void TexmodWindow::StartuModServer() {
         HANDLE CheckForSingleRun;
         char buffer[SMALL_BUFSIZE];
         std::wstring abort = ABORT_SERVER;
+        wchar_t Executable[MAX_PATH];
+        GetModuleFileNameW(GetModuleHandle(NULL), Executable, MAX_PATH); //ask for name and path of this executable
         CheckForSingleRun = CreateMutexW(NULL, true, L"Global\\uMod_CheckForSingleRun");
         if (ERROR_ALREADY_EXISTS == GetLastError()) {
             Log::Log("Failed to grab mutex for uMod - is it already running?");
@@ -105,23 +123,8 @@ void TexmodWindow::StartuModServer() {
             if(CheckForSingleRun) CloseHandle(CheckForSingleRun);
             return;
         }
-        Log::Log("Injecting Dll...\n");
-        if (!LoadDll()) {
-            Log::Error("Failed to inject dll");
-            uMod_Server_Running = false;
-            if (CheckForSingleRun) CloseHandle(CheckForSingleRun);
-            return;
-        }
         
         // Remove the hook first, then wait 1 second for our server to start listening, then re-attach
-        Log::Log("Removing hook\n");
-        uMod_RemoveHook();
-        uMod_Injector = std::thread([this]() {
-            std::this_thread::sleep_for(std::chrono::microseconds(500));
-            Log::Log("Installing hook\n");
-            if (uMod_InstallHook)
-                uMod_InstallHook();
-            });
         while (!uMod_Server_NeedToStop) {
             /*
                 Beep(300,100);
@@ -203,7 +206,7 @@ void TexmodWindow::StartuModServer() {
                 Log::Log("Failed to connect to pipe_out\n");
                 break;
             }
-            Log::Log("Add game? %s\n", name);
+            Log::Log("Add game? %ls\n", name.c_str());
         }
         if (pipe_in)            CloseHandle(pipe_in);
         if (pipe_out)           CloseHandle(pipe_out);

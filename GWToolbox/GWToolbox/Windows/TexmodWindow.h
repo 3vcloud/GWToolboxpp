@@ -15,6 +15,9 @@ private:
     bool uMod_Server_NeedToStop = false;
     uMod_pt uMod_InstallHook;
     uMod_pt uMod_RemoveHook;
+
+    HINSTANCE umod_d3d9_dll;
+
 public:
     static TexmodWindow& Instance() {
         static TexmodWindow instance;
@@ -38,4 +41,5 @@ public:
     void DrawSettingInternal() override;
 private:
     bool LoadDll();
+    bool UnloadDll();
 };

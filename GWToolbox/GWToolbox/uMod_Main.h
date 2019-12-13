@@ -43,11 +43,6 @@ along with Universal Modding Engine.  If not, see <http://www.gnu.org/licenses/>
 #define wxUSE_TOOLTIPS 1
 #endif
 
-#define WINVER _WIN32_WINNT_WINXP
-#define _WIN32_WINNT _WIN32_WINNT_WINXP
-#define NTDDI_VERSION NTDDI_WINXP
-#define WIN32_LEAN_AND_MEAN
-
 
 /*#include "wx\wx.h"
 #include "wx\notebook.h"
