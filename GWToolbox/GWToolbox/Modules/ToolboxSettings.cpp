@@ -25,6 +25,7 @@
 #include <Modules/TwitchModule.h>
 #include <Modules/PartyWindowModule.h>
 #include <Modules/ZrawDeepModule.h>
+#include <Modules/QuickWikiModule.h>
 
 #include <Windows/MainWindow.h>
 #include <Windows/PconsWindow.h>
@@ -67,6 +68,7 @@ bool ToolboxSettings::move_all = false;
 void ToolboxSettings::LoadModules(CSimpleIni* ini) {
 	SettingsWindow::Instance().sep_modules = optional_modules.size();
     optional_modules.push_back(&ZrawDeepModule::Instance());
+    optional_modules.push_back(&QuickWikiModule::Instance());
 	if (use_gamesettings) optional_modules.push_back(&GameSettings::Instance());
 	if (use_updater) optional_modules.push_back(&Updater::Instance());
 	if (use_chatfilter) optional_modules.push_back(&ChatFilter::Instance());
