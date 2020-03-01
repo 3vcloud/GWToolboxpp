@@ -1786,7 +1786,7 @@ static void ParseWiki(std::string wiki_page) {
 	wiki_page.erase(std::remove(wiki_page.begin(), wiki_page.end(), '\r'), wiki_page.end());
 	wiki_page.erase(std::remove(wiki_page.begin(), wiki_page.end(), '\t'), wiki_page.end());
 
-	std::cout << wiki_page << std::endl;
+	//std::cout << wiki_page << std::endl;
 
 	std::cout << "wiki_page.length: " << wiki_page.length() << std::endl;
 
@@ -1823,6 +1823,7 @@ static void WikiSalvageCheck(GW::Item *item) {
 	printf("<%ls>\n", chat_url.c_str());
 
 	GW::Chat::WriteChat(GW::Chat::Channel::CHANNEL_GLOBAL, chat_url.c_str());
+	ShellExecuteW(NULL, L"open", final_url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	//Resources::Instance().Download(L"https://wiki.guildwars.com/wiki/Pronged_Fan", WikiSalvageCallback);
 	Resources::Instance().Download(final_url, WikiSalvageCallback);
 }
