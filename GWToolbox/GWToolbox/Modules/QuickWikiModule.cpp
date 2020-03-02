@@ -16,7 +16,6 @@
 const std::wstring wiki_url(L"https://wiki.guildwars.com/wiki/");
 
 void QuickWikiModule::Initialize() {
-	//std::cout << "QuickWikiModule::Initialize" << std::endl;
 	ToolboxModule::Initialize();
 	GW::Items::RegisterItemClickCallback(&ItemClickCallback_Entry, QuickWikiModule::ItemClickCallback);
 }
@@ -38,8 +37,6 @@ static std::wstring DecodeToWikiLink(wchar_t *inp) {
 	printf("<%ls>\n", item_url.c_str());
 #endif
 	return BuildWikiLink(item_url);
-	//std::wstring chat_url = BuildChatLink(final_url);
-
 }
 
 
@@ -172,4 +169,5 @@ void QuickWikiModule::DrawSettingInternal() {
 	ImGui::Checkbox("shows (potential) wiki url", &shift_click_show_wiki_url);
 	ImGui::Checkbox("opens (potential) wiki page", &shift_click_item_open_wiki);
 	ImGui::Checkbox("attemps to read salvage info from wiki (EXPERIMENTAL)", &shift_click_parse_wiki_salvage);
+	ImGui::Unindent();
 }
