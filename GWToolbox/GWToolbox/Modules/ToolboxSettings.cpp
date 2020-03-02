@@ -68,7 +68,7 @@ bool ToolboxSettings::move_all = false;
 void ToolboxSettings::LoadModules(CSimpleIni* ini) {
 	SettingsWindow::Instance().sep_modules = optional_modules.size();
     optional_modules.push_back(&ZrawDeepModule::Instance());
-    optional_modules.push_back(&QuickWikiModule::Instance());
+    if (use_quick_wiki) optional_modules.push_back(&QuickWikiModule::Instance());
 	if (use_gamesettings) optional_modules.push_back(&GameSettings::Instance());
 	if (use_updater) optional_modules.push_back(&Updater::Instance());
 	if (use_chatfilter) optional_modules.push_back(&ChatFilter::Instance());
@@ -166,6 +166,8 @@ void ToolboxSettings::DrawSettingInternal() {
 	ImGui::SameLine(ImGui::GetWindowWidth() / 2);
 	ImGui::Checkbox("Friend List", &use_friendlist);
 	ImGui::Checkbox("Daily Quests", &use_daily_quests);
+	ImGui::SameLine(ImGui::GetWindowWidth() / 2);
+	ImGui::Checkbox("Quick Wiki", &use_quick_wiki);
 
 	ImGui::PopID();
 
@@ -229,6 +231,7 @@ void ToolboxSettings::LoadSettings(CSimpleIni* ini) {
 	use_friendlist = ini->GetBoolValue(Name(), VAR_NAME(use_friendlist), use_friendlist);
 	use_serverinfo = ini->GetBoolValue(Name(), VAR_NAME(use_serverinfo), use_serverinfo);
 	use_daily_quests = ini->GetBoolValue(Name(), VAR_NAME(use_daily_quests), use_daily_quests);
+	use_quick_wiki = ini->GetBoolValue(Name(), VAR_NAME(use_quick_wiki), use_quick_wiki);
 }
 
 void ToolboxSettings::SaveSettings(CSimpleIni* ini) {
@@ -266,6 +269,7 @@ void ToolboxSettings::SaveSettings(CSimpleIni* ini) {
 	ini->SetBoolValue(Name(), VAR_NAME(use_chatfilter), use_chatfilter);
 	ini->SetBoolValue(Name(), VAR_NAME(use_chatcommand), use_chatcommand);
 	ini->SetBoolValue(Name(), VAR_NAME(use_daily_quests), use_daily_quests);
+	ini->SetBoolValue(Name(), VAR_NAME(use_quick_wiki), use_quick_wiki);
 }
 
 void ToolboxSettings::Update(float delta) {

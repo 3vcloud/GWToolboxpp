@@ -25,12 +25,12 @@ public:
 	void SignalTerminate() override;
 	void Update(float delta) override;
 	void DrawSettingInternal() override;
+	virtual void Terminate() override;
 
 	bool CanTerminate() { return true; };
 	bool HasSettings() { return true; };
 
 	// virtual void DrawHelp() {};
-	// virtual void Terminate() {};
 	// virtual bool WndProc(UINT Message, WPARAM wParam, LPARAM lParam) { return false; };
 
 	void LoadSettings(CSimpleIni* ini);
@@ -38,6 +38,12 @@ public:
 
 	static void ItemClickCallback(GW::HookStatus*, uint32_t type, uint32_t slot, GW::Bag* bag);
 
+	static const std::wstring wiki_url;
+
 private:
+	bool shift_click_show_wiki_url = true;
+	bool shift_click_item_open_wiki = true;
+	bool shift_click_parse_wiki_salvage = false;
+
 	GW::HookEntry ItemClickCallback_Entry;
 };
